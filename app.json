@@ -1,15 +1,15 @@
 {
   "expo": {
-    "name": "appname",
-    "slug": "appname",
+    "name": "Strings",
+    "slug": "strings",
     "version": "1.0.0",
     "orientation": "portrait",
-    "scheme": "appname",
+    "scheme": "strings",
     "newArchEnabled": true,
     "icon": "./assets/images/icon.png",
     "android": {
       "backgroundColor": "#000000",
-      "package": "com.vandam.appname"
+      "package": "com.garado.strings"
     },
     "plugins": [
       "expo-router",
