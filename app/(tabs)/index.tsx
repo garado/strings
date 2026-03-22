@@ -23,10 +23,12 @@ export default function TunerScreen() {
                 </StyledText>
             </View>
 
-            <StyledButton
-                text={isListening ? "stop" : "start"}
-                onPress={isListening ? stop : start}
-            />
+            <View style={styles.buttonRow}>
+                <StyledButton
+                    text={isListening ? "stop" : "start"}
+                    onPress={isListening ? stop : start}
+                />
+            </View>
         </ContentContainer>
     );
 }
@@ -34,12 +36,12 @@ export default function TunerScreen() {
 const styles = StyleSheet.create({
     content: {
         justifyContent: "space-between",
-        paddingBottom: n(48),
     },
     display: {
         flex: 1,
+        width: "100%",
         justifyContent: "center",
-        alignItems: "flex-start",
+        alignItems: "center",
         gap: n(8),
     },
     note: {
@@ -48,5 +50,10 @@ const styles = StyleSheet.create({
     },
     freq: {
         fontSize: n(20),
+    },
+    buttonRow: {
+        width: "100%",
+        alignItems: "center",
+        paddingBottom: n(48),
     },
 });
