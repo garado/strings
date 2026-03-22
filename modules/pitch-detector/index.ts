@@ -10,6 +10,10 @@ export interface PitchEvent {
     cents: number;
 }
 
+export function setReferencePitch(hz: number): Promise<void> {
+  return PitchDetectorNative.setReferencePitch(hz);
+}
+
 export function startListening(): Promise<void> {
     return PitchDetectorNative.startListening();
 }

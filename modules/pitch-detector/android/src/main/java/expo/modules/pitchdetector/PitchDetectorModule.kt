@@ -13,6 +13,7 @@ class PitchDetectorModule : Module() {
     private val sampleRate = 44100
     private val bufferSamples = 2048
     private val notes = arrayOf("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B")
+    @Volatile private var referencePitch = 440.0
 
     private var audioRecord: AudioRecord? = null
     private var captureThread: Thread? = null
@@ -22,6 +23,10 @@ class PitchDetectorModule : Module() {
         Name("PitchDetector")
 
         Events("onPitchDetected")
+
+        AsyncFunction("setReferencePitch") { hz: Double ->
+            referencePitch = hz
+        }
 
         AsyncFunction("startListening") {
             startCapture()
@@ -65,7 +70,7 @@ class PitchDetectorModule : Module() {
 
                 val freq = detectPitch(floatBuf)
                 if (freq > 0) {
-                    val midi = 12 * log2(freq / 440.0) + 69
+                    val midi = 12 * log2(freq / referencePitch) + 69
                     val rounded = round(midi).toInt()
                     val cents = round((midi - rounded) * 100).toInt()
                     val octave = rounded / 12 - 1

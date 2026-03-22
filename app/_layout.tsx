@@ -8,6 +8,7 @@ import {
   useInvertColors,
 } from "@/contexts/InvertColorsContext";
 import { DisplayModeProvider } from "@/contexts/DisplayModeContext";
+import { ReferencePitchProvider } from "@/contexts/ReferencePitchContext";
 import * as SystemUI from "expo-system-ui";
 import * as NavigationBar from 'expo-navigation-bar';
 import * as SplashScreen from 'expo-splash-screen';
@@ -35,6 +36,8 @@ function RootNavigation() {
       <Stack.Screen name="settings/customise" />
       <Stack.Screen name="settings/customise-interface" />
       <Stack.Screen name="settings/display-mode" />
+      <Stack.Screen name="settings/calibration" />
+      <Stack.Screen name="settings/calibration-custom" />
       <Stack.Screen name="confirm" />
     </Stack>
   );
@@ -62,9 +65,11 @@ export default function RootLayout() {
   return (
     <InvertColorsProvider>
       <DisplayModeProvider>
-        <HapticProvider>
-          <RootNavigation />
-        </HapticProvider>
+        <ReferencePitchProvider>
+          <HapticProvider>
+            <RootNavigation />
+          </HapticProvider>
+        </ReferencePitchProvider>
       </DisplayModeProvider>
     </InvertColorsProvider>
   );

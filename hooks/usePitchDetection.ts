@@ -1,10 +1,12 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { PermissionsAndroid, Platform } from "react-native";
-import { startListening, stopListening, addPitchListener, PitchEvent } from "@/modules/pitch-detector";
+import { startListening, stopListening, addPitchListener, setReferencePitch, PitchEvent } from "@/modules/pitch-detector";
+import { useReferencePitch } from "@/contexts/ReferencePitchContext";
 
 export type PitchResult = PitchEvent;
 
 export function usePitchDetection() {
+    const { referencePitch } = useReferencePitch();
     const [isListening, setIsListening] = useState(false);
     const [pitchResult, setPitchResult] = useState<PitchResult | null>(null);
     const silenceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -54,6 +56,10 @@ export function usePitchDetection() {
             if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
         };
     }, [isListening]);
+
+    useEffect(() => {
+        setReferencePitch(referencePitch).catch(() => {});
+    }, [referencePitch]);
 
     useEffect(() => {
         return () => { stopListening().catch(() => {}); };
