@@ -21,14 +21,19 @@ export function TunerGauge({ cents }: TunerGaugeProps) {
   const dimColor = invertColors ? "#ccc" : "#3a3a3a";
   const activeColor = invertColors ? "black" : "white";
   const inTune = cents !== null && Math.abs(cents) <= 5;
-  const centerColor = cents === null ? dimColor : inTune ? "#4CAF50" : activeColor;
+
+  const activeTick = cents === null
+    ? null
+    : Math.round((cents + 50) / 100 * (N_TICKS - 1));
 
   const ticks = Array.from({ length: N_TICKS }, (_, i) => {
     const center = (N_TICKS - 1) / 2;
     const isCenter = i === center;
     const height = isCenter ? MAX_TICK_HEIGHT : MIN_TICK_HEIGHT;
     const x = (i / (N_TICKS - 1)) * GAUGE_WIDTH;
-    return { height, x, isCenter };
+    const filled = activeTick !== null && i <= activeTick;
+    const color = filled ? (inTune ? "#4CAF50" : activeColor) : dimColor;
+    return { height, x, color };
   });
 
   return (
@@ -42,7 +47,7 @@ export function TunerGauge({ cents }: TunerGaugeProps) {
               left: tick.x - TICK_WIDTH / 2,
               height: tick.height,
               top: (MAX_TICK_HEIGHT - tick.height) / 2,
-              backgroundColor: tick.isCenter ? centerColor : dimColor,
+              backgroundColor: tick.color,
             },
           ]}
         />
