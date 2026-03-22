@@ -18,9 +18,7 @@ interface TunerGaugeProps {
 
 export function TunerGauge({ cents }: TunerGaugeProps) {
   const { invertColors } = useInvertColors();
-  const dimColor = invertColors ? "#ccc" : "#3a3a3a";
   const activeColor = invertColors ? "black" : "white";
-  const inTune = cents !== null && Math.abs(cents) <= 5;
 
   const animTick = useRef(new Animated.Value((N_TICKS - 1) / 2)).current;
   const [displayTick, setDisplayTick] = useState((N_TICKS - 1) / 2);
@@ -48,9 +46,12 @@ export function TunerGauge({ cents }: TunerGaugeProps) {
     const isCenter = i === center;
     const height = isCenter ? MAX_TICK_HEIGHT : MIN_TICK_HEIGHT;
     const x = (i / (N_TICKS - 1)) * GAUGE_WIDTH;
-    const filled = activeTick !== null && i <= Math.round(activeTick);
-    const color = filled ? (inTune ? "#4CAF50" : activeColor) : dimColor;
-    return { height, x, color };
+    let opacity = 0.15;
+    if (activeTick !== null) {
+      if (i < activeTick) opacity = 1;
+      else if (i < activeTick + 1) opacity = activeTick - Math.floor(activeTick);
+    }
+    return { height, x, opacity };
   });
 
   return (
@@ -64,7 +65,8 @@ export function TunerGauge({ cents }: TunerGaugeProps) {
               left: tick.x - TICK_WIDTH / 2,
               height: tick.height,
               top: (MAX_TICK_HEIGHT - tick.height) / 2,
-              backgroundColor: tick.color,
+              backgroundColor: activeColor,
+              opacity: tick.opacity,
             },
           ]}
         />
