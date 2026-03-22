@@ -1,0 +1,55 @@
+import { useState, useEffect, useCallback, useRef } from "react";
+import { PermissionsAndroid, Platform } from "react-native";
+import { startListening, stopListening, addPitchListener, PitchEvent } from "@/modules/pitch-detector";
+
+export type PitchResult = PitchEvent;
+
+export function usePitchDetection() {
+    const [isListening, setIsListening] = useState(false);
+    const [pitchResult, setPitchResult] = useState<PitchResult | null>(null);
+    const silenceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    const start = useCallback(async () => {
+        if (Platform.OS === "android") {
+            const status = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+                {
+                    title: "Microphone Access",
+                    message: "Strings needs microphone access to detect pitch.",
+                    buttonPositive: "Allow",
+                }
+            );
+            if (status !== PermissionsAndroid.RESULTS.GRANTED) return;
+        }
+        await startListening();
+        setIsListening(true);
+    }, []);
+
+    const stop = useCallback(async () => {
+        await stopListening();
+        if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
+        setIsListening(false);
+        setPitchResult(null);
+    }, []);
+
+    useEffect(() => {
+        if (!isListening) return;
+
+        const sub = addPitchListener((event) => {
+            setPitchResult(event);
+            if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
+            silenceTimerRef.current = setTimeout(() => setPitchResult(null), 300);
+        });
+
+        return () => {
+            sub.remove();
+            if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
+        };
+    }, [isListening]);
+
+    useEffect(() => {
+        return () => { stopListening().catch(() => {}); };
+    }, []);
+
+    return { isListening, pitchResult, start, stop };
+}

@@ -1,32 +1,52 @@
+import { View, StyleSheet } from "react-native";
 import ContentContainer from "@/components/ContentContainer";
+import { StyledText } from "@/components/StyledText";
 import { StyledButton } from "@/components/StyledButton";
-import CustomScrollView from "@/components/CustomScrollView";
 import { n } from "@/utils/scaling";
+import { usePitchDetection } from "@/hooks/usePitchDetection";
 
-const buttons = [
-  { id: "1", text: "Test Button 1" },
-  { id: "2", text: "Test Button 2" },
-  { id: "3", text: "Test Button 3" },
-  { id: "4", text: "Test Button 4" },
-  { id: "5", text: "Test Button 5" },
-  { id: "6", text: "Test Button 6" },
-  { id: "7", text: "Test Button 7" },
-  { id: "8", text: "Test Button 8" },
-  { id: "9", text: "Test Button 9" },
-  { id: "10", text: "Test Button 10" },
-];
+export default function TunerScreen() {
+    const { isListening, pitchResult, start, stop } = usePitchDetection();
 
-export default function Tab() {
-  return (
-    <ContentContainer headerTitle="Liked Songs" hideBackButton style={{ paddingHorizontal: n(20) }}>
-      <CustomScrollView
-        data={buttons}
-        renderItem={({ item }) => (
-          <StyledButton text={item.text} />
-        )}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={{ gap: n(28) }}
-      />
-    </ContentContainer>
-  );
+    return (
+        <ContentContainer
+            headerTitle="Tuner"
+            hideBackButton
+            style={styles.content}
+        >
+            <View style={styles.display}>
+                <StyledText style={styles.note}>
+                    {pitchResult ? `${pitchResult.note}${pitchResult.octave}` : "─"}
+                </StyledText>
+                <StyledText style={styles.freq}>
+                    {pitchResult ? `${pitchResult.frequency.toFixed(1)} Hz` : ""}
+                </StyledText>
+            </View>
+
+            <StyledButton
+                text={isListening ? "stop" : "start"}
+                onPress={isListening ? stop : start}
+            />
+        </ContentContainer>
+    );
 }
+
+const styles = StyleSheet.create({
+    content: {
+        justifyContent: "space-between",
+        paddingBottom: n(48),
+    },
+    display: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "flex-start",
+        gap: n(8),
+    },
+    note: {
+        fontSize: n(96),
+        lineHeight: n(110),
+    },
+    freq: {
+        fontSize: n(20),
+    },
+});
