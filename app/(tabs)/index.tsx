@@ -1,59 +1,48 @@
-import { View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
+import { useFocusEffect } from "expo-router";
+import { useCallback } from "react";
 import ContentContainer from "@/components/ContentContainer";
 import { StyledText } from "@/components/StyledText";
-import { StyledButton } from "@/components/StyledButton";
+import { TunerGauge } from "@/components/TunerGauge";
 import { n } from "@/utils/scaling";
 import { usePitchDetection } from "@/hooks/usePitchDetection";
 
 export default function TunerScreen() {
-    const { isListening, pitchResult, start, stop } = usePitchDetection();
+  const { pitchResult, start, stop } = usePitchDetection();
 
-    return (
-        <ContentContainer
-            headerTitle="Tuner"
-            hideBackButton
-            style={styles.content}
-        >
-            <View style={styles.display}>
-                <StyledText style={styles.note}>
-                    {pitchResult ? `${pitchResult.note}${pitchResult.octave}` : "─"}
-                </StyledText>
-                <StyledText style={styles.freq}>
-                    {pitchResult ? `${pitchResult.frequency.toFixed(1)} Hz` : ""}
-                </StyledText>
-            </View>
+  useFocusEffect(
+    useCallback(() => {
+      start();
+      return () => { stop(); };
+    }, [])
+  );
 
-            <View style={styles.buttonRow}>
-                <StyledButton
-                    text={isListening ? "stop" : "start"}
-                    onPress={isListening ? stop : start}
-                />
-            </View>
-        </ContentContainer>
-    );
+  return (
+    <ContentContainer hideBackButton style={styles.content}>
+      <StyledText style={styles.note}>
+        {pitchResult ? `${pitchResult.note}${pitchResult.octave}` : "─"}
+      </StyledText>
+
+      <StyledText style={styles.freq}>
+        {pitchResult ? `${pitchResult.frequency.toFixed(1)} Hz` : "─"}
+      </StyledText>
+
+      <TunerGauge cents={pitchResult?.cents ?? null} />
+    </ContentContainer>
+  );
 }
 
 const styles = StyleSheet.create({
-    content: {
-        justifyContent: "space-between",
-    },
-    display: {
-        flex: 1,
-        width: "100%",
-        justifyContent: "center",
-        alignItems: "center",
-        gap: n(8),
-    },
-    note: {
-        fontSize: n(96),
-        lineHeight: n(110),
-    },
-    freq: {
-        fontSize: n(20),
-    },
-    buttonRow: {
-        width: "100%",
-        alignItems: "center",
-        paddingBottom: n(48),
-    },
+  content: {
+    justifyContent: "space-evenly",
+    alignItems: "center",
+    paddingVertical: n(32),
+  },
+  note: {
+    fontSize: n(96),
+    lineHeight: n(110),
+  },
+  freq: {
+    fontSize: n(20),
+  },
 });
