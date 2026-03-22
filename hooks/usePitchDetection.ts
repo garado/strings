@@ -38,7 +38,7 @@ export function usePitchDetection() {
         const sub = addPitchListener((event) => {
             setPitchResult(event);
             if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
-            silenceTimerRef.current = setTimeout(() => setPitchResult(null), 300);
+            silenceTimerRef.current = setTimeout(() => setPitchResult(null), 3000);
         });
 
         return () => {
