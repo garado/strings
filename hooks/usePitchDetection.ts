@@ -8,6 +8,8 @@ export function usePitchDetection() {
     const [isListening, setIsListening] = useState(false);
     const [pitchResult, setPitchResult] = useState<PitchResult | null>(null);
     const silenceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const smoothedCentsRef = useRef<number>(0);
+    const lastNoteRef = useRef<string>("");
 
     const start = useCallback(async () => {
         if (Platform.OS === "android") {
@@ -36,7 +38,13 @@ export function usePitchDetection() {
         if (!isListening) return;
 
         const sub = addPitchListener((event) => {
-            setPitchResult(event);
+            if (event.note !== lastNoteRef.current) {
+                lastNoteRef.current = event.note;
+                smoothedCentsRef.current = event.cents;
+            } else {
+                smoothedCentsRef.current = smoothedCentsRef.current * 0.7 + event.cents * 0.3;
+            }
+            setPitchResult({ ...event, cents: Math.round(smoothedCentsRef.current) });
             if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
             silenceTimerRef.current = setTimeout(() => setPitchResult(null), 3000);
         });
