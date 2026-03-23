@@ -11,7 +11,7 @@ import kotlin.math.sqrt
 
 class PitchDetectorModule : Module() {
     private val sampleRate = 44100
-    private val bufferSamples = 2048
+    private val bufferSamples = 4096
     private val notes = arrayOf("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B")
     @Volatile private var referencePitch = 440.0
 
