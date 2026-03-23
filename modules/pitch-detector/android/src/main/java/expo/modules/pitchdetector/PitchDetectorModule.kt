@@ -59,6 +59,7 @@ class PitchDetectorModule : Module() {
         captureThread = Thread {
             val shortBuf = ShortArray(bufferSamples)
             val floatBuf = FloatArray(bufferSamples)
+            var lastFreq = 0.0
 
             while (isRunning) {
                 val read = audioRecord?.read(shortBuf, 0, bufferSamples) ?: break
@@ -68,7 +69,17 @@ class PitchDetectorModule : Module() {
                     floatBuf[i] = shortBuf[i] / 32768.0f
                 }
 
-                val freq = detectPitch(floatBuf)
+                var freq = detectPitch(floatBuf)
+
+                // Octave error correction: if new freq is ~2x or ~0.5x the last,
+                // it's likely an octave jump - correct it back
+                if (freq > 0 && lastFreq > 0) {
+                    val ratio = freq / lastFreq
+                    if (ratio > 1.8 && ratio < 2.2) freq /= 2.0
+                    else if (ratio > 0.45 && ratio < 0.55) freq *= 2.0
+                }
+                if (freq > 0) lastFreq = freq
+
                 if (freq > 0) {
                     val midi = 12 * log2(freq / referencePitch) + 69
                     val rounded = round(midi).toInt()
