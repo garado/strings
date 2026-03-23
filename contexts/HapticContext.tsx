@@ -1,22 +1,28 @@
-import { createContext, useContext, ReactNode } from "react";
+import { createContext, useContext, useState, ReactNode } from "react";
 import * as Haptics from "expo-haptics";
 
 const HapticContext = createContext<{
-	triggerHaptic: () => void;
+  triggerHaptic: () => void;
+  hapticEnabled: boolean;
+  setHapticEnabled: (enabled: boolean) => void;
 }>({
-	triggerHaptic: () => {},
+  triggerHaptic: () => {},
+  hapticEnabled: true,
+  setHapticEnabled: () => {},
 });
 
 export const useHaptic = () => useContext(HapticContext);
 
 export const HapticProvider = ({ children }: { children: ReactNode }) => {
-	const triggerHaptic = () => {
-		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-	};
+  const [hapticEnabled, setHapticEnabled] = useState(true);
 
-	return (
-		<HapticContext.Provider value={{ triggerHaptic }}>
-			{children}
-		</HapticContext.Provider>
-	);
+  const triggerHaptic = () => {
+    if (hapticEnabled) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  };
+
+  return (
+    <HapticContext.Provider value={{ triggerHaptic, hapticEnabled, setHapticEnabled }}>
+      {children}
+    </HapticContext.Provider>
+  );
 };

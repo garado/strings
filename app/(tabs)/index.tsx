@@ -1,14 +1,25 @@
 import { StyleSheet, View } from "react-native";
 import { useFocusEffect } from "expo-router";
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import ContentContainer from "@/components/ContentContainer";
 import { StyledText } from "@/components/StyledText";
 import { TunerGauge } from "@/components/TunerGauge";
 import { n } from "@/utils/scaling";
 import { usePitchDetection } from "@/hooks/usePitchDetection";
+import { useHaptic } from "@/contexts/HapticContext";
+
+const IN_TUNE_THRESHOLD = 5;
 
 export default function TunerScreen() {
     const { pitchResult, start, stop } = usePitchDetection();
+    const { triggerHaptic } = useHaptic();
+    const wasInTuneRef = useRef(false);
+
+    useEffect(() => {
+        const inTune = pitchResult !== null && Math.abs(pitchResult.cents) <= IN_TUNE_THRESHOLD;
+        if (inTune && !wasInTuneRef.current) triggerHaptic();
+        wasInTuneRef.current = inTune;
+    }, [pitchResult]);
 
     useFocusEffect(
         useCallback(() => {
