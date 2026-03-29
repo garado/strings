@@ -71,8 +71,8 @@ class PitchDetectorModule : Module() {
 
                 var freq = detectPitch(floatBuf)
 
-                // Octave error correction: if new freq is ~2x or ~0.5x the last,
-                // it's likely an octave jump - correct it back
+                // Octave error correction: if new freq is ~2x or ~0.5x the last, it's
+                // likely an erroneous octave jump - correct it back
                 if (freq > 0 && lastFreq > 0) {
                     val ratio = freq / lastFreq
                     if (ratio > 1.8 && ratio < 2.2) freq /= 2.0
@@ -138,8 +138,8 @@ class PitchDetectorModule : Module() {
         for (tau in minLag..maxLag) {
             if (cmnd[tau] < threshold) {
                 var t = tau
-                while (t + 1 <= maxLag && cmnd[t + 1] < cmnd[t]) t++
-                return sampleRate.toDouble() / parabolicInterp(cmnd, t, maxLag)
+                while (t + 1 <= maxLag && diff[t + 1] < diff[t]) t++
+                return sampleRate.toDouble() / parabolicInterp(diff, t, maxLag)
             }
         }
 
@@ -149,13 +149,13 @@ class PitchDetectorModule : Module() {
             if (cmnd[tau] < minVal) { minVal = cmnd[tau]; minTau = tau }
         }
         if (minVal > 0.6) return -1.0
-        return sampleRate.toDouble() / parabolicInterp(cmnd, minTau, maxLag)
+        return sampleRate.toDouble() / parabolicInterp(diff, minTau, maxLag)
     }
 
     private fun parabolicInterp(arr: DoubleArray, tau: Int, max: Int): Double {
         if (tau <= 0 || tau >= max) return tau.toDouble()
         val a = arr[tau - 1]; val b = arr[tau]; val c = arr[tau + 1]
-        val denom = 2 * b - a - c
+        val denom = a - 2 * b + c
         return if (denom == 0.0) tau.toDouble() else tau + (a - c) / (2 * denom)
     }
 }
