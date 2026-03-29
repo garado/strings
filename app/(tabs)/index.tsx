@@ -8,6 +8,7 @@ import { n } from "@/utils/scaling";
 import { usePitchDetection } from "@/hooks/usePitchDetection";
 import { useHaptic } from "@/contexts/HapticContext";
 import { useReferencePitch } from "@/contexts/ReferencePitchContext";
+import { useNoteDisplay, toDisplayNote } from "@/contexts/NoteDisplayContext";
 
 const IN_TUNE_THRESHOLD = 5;
 
@@ -15,6 +16,7 @@ export default function TunerScreen() {
     const { pitchResult, start, stop } = usePitchDetection();
     const { triggerHaptic } = useHaptic();
     const { referencePitch } = useReferencePitch();
+    const { noteDisplay } = useNoteDisplay();
     const wasInTuneRef = useRef(false);
 
     useEffect(() => {
@@ -36,7 +38,7 @@ export default function TunerScreen() {
                 <View style={styles.pitchGroup}>
                     <View style={styles.noteRow}>
                         <StyledText style={styles.note}>
-                            {pitchResult ? pitchResult.note : "─"}
+                            {pitchResult ? toDisplayNote(pitchResult.note, noteDisplay) : "─"}
                         </StyledText>
                         {pitchResult && (
                             <StyledText style={styles.octave}>{pitchResult.octave}</StyledText>

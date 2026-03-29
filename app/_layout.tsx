@@ -5,6 +5,7 @@ import { useFonts } from "expo-font";
 import { setStatusBarHidden } from "expo-status-bar";
 import { InvertColorsProvider, useInvertColors } from "@/contexts/InvertColorsContext";
 import { ReferencePitchProvider } from "@/contexts/ReferencePitchContext";
+import { NoteDisplayProvider } from "@/contexts/NoteDisplayContext";
 import * as SystemUI from "expo-system-ui";
 import * as NavigationBar from "expo-navigation-bar";
 import * as SplashScreen from "expo-splash-screen";
@@ -57,9 +58,11 @@ export default function RootLayout() {
   return (
     <InvertColorsProvider>
       <ReferencePitchProvider>
-        <HapticProvider>
-          <RootNavigation />
-        </HapticProvider>
+        <NoteDisplayProvider>
+          <HapticProvider>
+            <RootNavigation />
+          </HapticProvider>
+        </NoteDisplayProvider>
       </ReferencePitchProvider>
     </InvertColorsProvider>
   );
