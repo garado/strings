@@ -3,12 +3,10 @@ import { PermissionsAndroid, Platform } from "react-native";
 import { startListening, stopListening, addPitchListener, setReferencePitch, PitchEvent } from "@/modules/pitch-detector";
 import { useReferencePitch } from "@/contexts/ReferencePitchContext";
 
-export type PitchResult = PitchEvent;
-
 export function usePitchDetection() {
     const { referencePitch } = useReferencePitch();
     const [isListening, setIsListening] = useState(false);
-    const [pitchResult, setPitchResult] = useState<PitchResult | null>(null);
+    const [pitchResult, setPitchResult] = useState<PitchEvent | null>(null);
     const silenceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const smoothedCentsRef = useRef<number>(0);
     const lastNoteRef = useRef<string>("");
