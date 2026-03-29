@@ -12,6 +12,12 @@ A minimal tuner app for the Light Phone 3.
 
 - Tuning drone
 - Instrument presets
+- Noise sensitivity adjustment
+- Transposition
+
+## Known issues
+
+Octave detection can occasionally be off by +-1 octave, but this does not affect tuning accuracy.
 
 ## Installation
 
