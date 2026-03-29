@@ -8,6 +8,11 @@ A minimal tuner app for the Light Phone 3.
 - Adjustable reference pitch
 - Adjustable note display (sharp/flat)
 
+## Planned features
+
+- Tuning drone
+- Instrument presets
+
 ## Installation
 
 The latest APK is available in [releases](https://github.com/garado/metronome/releases/).
