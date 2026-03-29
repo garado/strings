@@ -29,6 +29,9 @@
         "projectId": "ffaea00f-5ce2-4b77-97f7-a21b6b623bc8"
       }
     },
-    "owner": "agarado"
+    "owner": "agarado",
+    "ios": {
+      "bundleIdentifier": "com.garado.strings"
+    }
   }
 }
