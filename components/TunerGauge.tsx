@@ -23,10 +23,15 @@ export function TunerGauge({ cents }: TunerGaugeProps) {
   const animTick = useRef(new Animated.Value((N_TICKS - 1) / 2)).current;
   const [displayTick, setDisplayTick] = useState((N_TICKS - 1) / 2);
 
+  const IN_TUNE_CENTS = 5;
+  const centerTick = (N_TICKS - 1) / 2;
+
   useEffect(() => {
     const target = cents === null
-      ? (N_TICKS - 1) / 2
-      : (cents + 50) / 100 * (N_TICKS - 1);
+      ? centerTick
+      : Math.abs(cents) <= IN_TUNE_CENTS
+        ? centerTick + 0.001
+        : (cents + 50) / 100 * (N_TICKS - 1);
 
     Animated.spring(animTick, {
       toValue: target,

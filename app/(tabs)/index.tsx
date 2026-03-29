@@ -7,12 +7,14 @@ import { TunerGauge } from "@/components/TunerGauge";
 import { n } from "@/utils/scaling";
 import { usePitchDetection } from "@/hooks/usePitchDetection";
 import { useHaptic } from "@/contexts/HapticContext";
+import { useReferencePitch } from "@/contexts/ReferencePitchContext";
 
 const IN_TUNE_THRESHOLD = 5;
 
 export default function TunerScreen() {
     const { pitchResult, start, stop } = usePitchDetection();
     const { triggerHaptic } = useHaptic();
+    const { referencePitch } = useReferencePitch();
     const wasInTuneRef = useRef(false);
 
     useEffect(() => {
@@ -30,20 +32,29 @@ export default function TunerScreen() {
 
     return (
         <ContentContainer hideBackButton style={styles.content}>
-            <View style={styles.noteRow}>
-                <StyledText style={styles.note}>
-                    {pitchResult ? pitchResult.note : "─"}
-                </StyledText>
-                {pitchResult && (
-                    <StyledText style={styles.octave}>{pitchResult.octave}</StyledText>
-                )}
+            <View style={styles.centerGroup}>
+                <View style={styles.pitchGroup}>
+                    <View style={styles.noteRow}>
+                        <StyledText style={styles.note}>
+                            {pitchResult ? pitchResult.note : "─"}
+                        </StyledText>
+                        {pitchResult && (
+                            <StyledText style={styles.octave}>{pitchResult.octave}</StyledText>
+                        )}
+                    </View>
+
+                    <View style={styles.freqBox}>
+                        <StyledText style={styles.freq}>
+                            {pitchResult ? `${pitchResult.frequency.toFixed(1)} Hz` : "─"}
+                        </StyledText>
+                        <StyledText style={styles.referencePitch}>
+                            A4 = {referencePitch} Hz
+                        </StyledText>
+                    </View>
+                </View>
+
+                <TunerGauge cents={pitchResult?.cents ?? null} />
             </View>
-
-            <StyledText style={styles.freq}>
-                {pitchResult ? `${pitchResult.frequency.toFixed(1)} Hz` : "─"}
-            </StyledText>
-
-            <TunerGauge cents={pitchResult?.cents ?? null} />
         </ContentContainer>
     );
 }
@@ -54,20 +65,36 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingVertical: n(32),
     },
+    centerGroup: {
+        alignItems: "center",
+        gap: n(32),
+    },
+    pitchGroup: {
+        alignItems: "center",
+        gap: n(16),
+    },
     noteRow: {
         flexDirection: "row",
         alignItems: "flex-end",
         gap: n(8),
     },
     note: {
-        fontSize: n(96),
-        lineHeight: n(110),
+        fontSize: n(120),
+        lineHeight: n(136),
     },
     octave: {
         fontSize: n(30),
         paddingBottom: n(14),
     },
+    freqBox: {
+        alignItems: "center",
+        gap: n(4),
+    },
     freq: {
         fontSize: n(20),
+    },
+    referencePitch: {
+        fontSize: n(14),
+        opacity: 0.4,
     },
 });
