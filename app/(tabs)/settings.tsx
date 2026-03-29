@@ -1,3 +1,4 @@
+import * as Application from "expo-application";
 import ContentContainer from "@/components/ContentContainer";
 import { SelectorButton } from "@/components/SelectorButton";
 import { ToggleSwitch } from "@/components/ToggleSwitch";
@@ -9,9 +10,10 @@ export default function SettingsScreen() {
   const { referencePitch } = useReferencePitch();
   const { hapticEnabled, setHapticEnabled } = useHaptic();
   const { noteDisplay, setNoteDisplay } = useNoteDisplay();
+  const version = Application.nativeApplicationVersion;
 
   return (
-    <ContentContainer headerTitle="Settings" hideBackButton>
+    <ContentContainer headerTitle={`Settings (v${version})`} hideBackButton>
       <SelectorButton
         label="Reference Pitch"
         value={referencePitch === 440 ? "A440" : `Custom (A${referencePitch})`}
