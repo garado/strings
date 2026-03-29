@@ -107,6 +107,8 @@ class PitchDetectorModule : Module() {
         captureThread = null
     }
 
+    // YIN pitch detection algorithm
+    // de Cheveigné & Kawahara (2002): https://doi.org/10.1121/1.1458024
     private fun detectPitch(buffer: FloatArray): Double {
         var energy = 0.0
         for (s in buffer) energy += s * s
