@@ -54,7 +54,7 @@ export function TunerGauge({ cents }: TunerGaugeProps) {
     let opacity = 0.15;
     if (activeTick !== null) {
       if (i < activeTick) opacity = 1;
-      else if (i < activeTick + 1) opacity = activeTick - Math.floor(activeTick);
+      else if (i < activeTick + 1) opacity = Math.max(0.15, activeTick - Math.floor(activeTick));
     }
     return { height, x, opacity };
   });
