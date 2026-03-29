@@ -31,7 +31,6 @@ function RootNavigation() {
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="settings/calibration" />
       <Stack.Screen name="settings/calibration-custom" />
-      <Stack.Screen name="confirm" />
     </Stack>
   );
 }
