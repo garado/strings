@@ -7,7 +7,6 @@ import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 import kotlin.math.log2
 import kotlin.math.round
-import kotlin.math.sqrt
 
 class PitchDetectorModule : Module() {
     private val sampleRate = 44100
@@ -18,6 +17,7 @@ class PitchDetectorModule : Module() {
     private var audioRecord: AudioRecord? = null
     private var captureThread: Thread? = null
     private var isRunning = false
+    private val lock = Any()
 
     override fun definition() = ModuleDefinition {
         Name("PitchDetector")
@@ -38,6 +38,8 @@ class PitchDetectorModule : Module() {
     }
 
     private fun startCapture() {
+        if (isRunning) return
+
         val minBuffer = AudioRecord.getMinBufferSize(
             sampleRate,
             AudioFormat.CHANNEL_IN_MONO,
@@ -62,7 +64,7 @@ class PitchDetectorModule : Module() {
             var lastFreq = 0.0
 
             while (isRunning) {
-                val read = audioRecord?.read(shortBuf, 0, bufferSamples) ?: break
+                val read = synchronized(lock) { audioRecord?.read(shortBuf, 0, bufferSamples) } ?: break
                 if (read < bufferSamples) continue
 
                 for (i in 0 until bufferSamples) {
@@ -100,9 +102,11 @@ class PitchDetectorModule : Module() {
 
     private fun stopCapture() {
         isRunning = false
-        audioRecord?.stop()
-        audioRecord?.release()
-        audioRecord = null
+        synchronized(lock) {
+            audioRecord?.stop()
+            audioRecord?.release()
+            audioRecord = null
+        }
         captureThread?.join(500)
         captureThread = null
     }
