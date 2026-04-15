@@ -10,7 +10,7 @@ interface ReferencePitchContextType {
 
 const ReferencePitchContext = createContext<ReferencePitchContextType>({
   referencePitch: DEFAULT_PITCH,
-  setReferencePitch: async () => {},
+  setReferencePitch: async () => { },
 });
 
 export const useReferencePitch = () => useContext(ReferencePitchContext);

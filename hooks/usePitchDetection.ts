@@ -66,11 +66,11 @@ export function usePitchDetection() {
   useEffect(() => {
     const sub = AppState.addEventListener("change", (state) => {
       if (state === "background" || state === "inactive") {
-        stopListening().catch(() => { });
+        stop();
       }
     });
     return () => sub.remove();
-  }, []);
+  }, [stop]);
 
   return { isListening, pitchResult, start, stop };
 }

@@ -6,9 +6,9 @@ const HapticContext = createContext<{
   hapticEnabled: boolean;
   setHapticEnabled: (enabled: boolean) => void;
 }>({
-  triggerHaptic: () => {},
+  triggerHaptic: () => { },
   hapticEnabled: true,
-  setHapticEnabled: () => {},
+  setHapticEnabled: () => { },
 });
 
 export const useHaptic = () => useContext(HapticContext);
