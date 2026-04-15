@@ -10,25 +10,28 @@ import { useHaptic } from "@/contexts/HapticContext";
 import { useReferencePitch } from "@/contexts/ReferencePitchContext";
 import { useNoteDisplay, toDisplayNote } from "@/contexts/NoteDisplayContext";
 
-const IN_TUNE_THRESHOLD = 5;
+const IN_TUNE_THRESHOLD = 5; // cents
 
 export default function TunerScreen() {
-  const { pitchResult, start, stop } = usePitchDetection();
+  const { pitchResult, startPitchDetection, stopPitchDetection } = usePitchDetection();
   const { triggerHaptic } = useHaptic();
   const { referencePitch } = useReferencePitch();
   const { noteDisplay } = useNoteDisplay();
   const wasInTuneRef = useRef(false);
 
+  // watch PitchResult and trigger haptic if pitch is within +-5 cents
   useEffect(() => {
     const inTune = pitchResult !== null && Math.abs(pitchResult.cents) <= IN_TUNE_THRESHOLD;
     if (inTune && !wasInTuneRef.current) triggerHaptic();
     wasInTuneRef.current = inTune;
   }, [pitchResult]);
 
+  // start pitch detection when main screen is in focus
+  // stop pitch detection when main screen is out of focus
   useFocusEffect(
     useCallback(() => {
-      start();
-      return () => { stop(); };
+      startPitchDetection();
+      return () => { stopPitchDetection(); };
     }, [])
   );
 
