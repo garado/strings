@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { PermissionsAndroid, Platform } from "react-native";
+import { AppState, PermissionsAndroid, Platform } from "react-native";
 import { startListening, stopListening, addPitchListener, setReferencePitch, PitchEvent } from "@/modules/pitch-detector";
 import { useReferencePitch } from "@/contexts/ReferencePitchContext";
 
@@ -61,6 +61,15 @@ export function usePitchDetection() {
 
     useEffect(() => {
         return () => { stopListening().catch(() => {}); };
+    }, []);
+
+    useEffect(() => {
+        const sub = AppState.addEventListener("change", (state) => {
+            if (state === "background" || state === "inactive") {
+                stopListening().catch(() => {});
+            }
+        });
+        return () => sub.remove();
     }, []);
 
     return { isListening, pitchResult, start, stop };
