@@ -92,10 +92,12 @@ export function usePitchDetection() {
     const sub = AppState.addEventListener("change", (state) => {
       if (state === "background" || state === "inactive") {
         stopPitchDetection();
+      } else if (state === "active") {
+        startPitchDetection(); // background -> foreground
       }
     });
     return () => sub.remove();
-  }, [stopPitchDetection]);
+  }, [stopPitchDetection, startPitchDetection]);
 
   return { isListening, pitchResult, startPitchDetection, stopPitchDetection };
 }
