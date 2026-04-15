@@ -4,7 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export type NoteDisplay = "sharp" | "flat";
 
 const SHARP_NOTES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
-const FLAT_NOTES  = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"];
+const FLAT_NOTES = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"];
 
 export function toDisplayNote(note: string, display: NoteDisplay): string {
   const idx = SHARP_NOTES.indexOf(note);
@@ -17,7 +17,7 @@ const NoteDisplayContext = createContext<{
   setNoteDisplay: (v: NoteDisplay) => void;
 }>({
   noteDisplay: "sharp",
-  setNoteDisplay: () => {},
+  setNoteDisplay: () => { },
 });
 
 export const useNoteDisplay = () => useContext(NoteDisplayContext);
